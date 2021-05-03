@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+
+    <!-- CSS Section-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/stylesheets/style.css">
+  </head>
+  <body>
+    <!-- Main Navigation -->
+    <nav class="navbar fixed-top navbar-expand-xl navbar-dark" style="background-color: #e0ece4; "id="header">
+      <a class="navbar-brand" href="/"  style="color:#aa4a30; font-family: Lucida, Console; font-weight: bold; font-size: x-large;"><i class="fas fa-poll"></i> SurveyCity</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+        <% if (title && title.includes("Home")) { %>
+          <li class="nav-item active">
+        <% } else { %>
+          <li class="nav-item">
+        <% } %>
+          <a class="nav-link" href="/" style="color:#aa4a30; font-weight: bold; font-size: medium;"><i class="fas fa-lg fa-laptop-house"></i> Home</a>
+        </li>
+
+        <!---->
+        <% if (typeof displayName === "string" && displayName) { %>
+          <% if (title && title.includes("List")) { %>
+            <li class="nav-item active">
+          <% } else  { %>
+            <li class="nav-item">
+          <% } %>
+            <a class="nav-link" href="/survey" style="color:#aa4a30; font-weight: bold; font-size: medium;"><i class="fas fa-list"></i></i> Surveys</a>
+          </li>
+
+          <li class="navbar-text ml-4" style="color:#aa4a30; font-weight: bold; font-size: medium;"><i class="fas fa-lg fa-user" ></i > Welcome, <%= displayName %> </li>
+          <li class="nav-item"><a href="/logout" class="nav-link" style="color:#aa4a30; font-weight: bold; font-size: medium;">
+            <i class="fas fa-lg fa-sign-out-alt"></i> Logout</a></li>
+        <% } else { %>
+          <li class="nav-item ml-4"><a href="/login" class="nav-link" style="color:#aa4a30; font-weight: bold; font-size: medium;">
+            <i class="fas fa-lg fa-sign-in-alt"></i> Log in</a></li>
+          <li class="nav-item"><a href="/register" class="nav-link" style="color:#aa4a30; font-weight: bold; font-size: medium;">
+            <i class="fas fa-lg fa-sign-in-alt"></i> Sign up</a></li>
+        <% } %>
+      </div>
+    </nav>
+    <br>
+    <!-- Main navigation ends here-->
+
+    <!-- jumbotron-->
+    <main class="container">

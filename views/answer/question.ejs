@@ -1,0 +1,67 @@
+<%- include ../layout/header %>
+
+<h1><%= survey.title %></h1>
+
+<h3>[<%= `${progress[0]}/${progress[1]}` %>] <%= question.question %></h3>
+
+<form method="post">
+  <%
+  switch (question.type) {
+    case "input":
+      %>
+      <div class="form-group">
+        <label for="answer">Your answer:</label>
+        <input type="text" class="form-control" id="answer" name="answer" value="<%= answer %>" autofocus required>
+      </div>
+      <%
+      break;
+    case "textarea":
+      %>
+      <div class="form-group">
+        <label for="answer">Your answer:</label>
+        <textarea class="form-control" id="answer" name="answer" autofocus required><%= answer %></textarea>
+      </div>
+      <%
+      break;
+    case "radio":
+      for (let i = 0; i < question.options.length; i++) {
+        const option = question.options[i];
+        %>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="answer-<%= i %>" name="answer" value="<%= option %>" <%= answer === option ? "checked" : "" %>>
+          <label class="form-check-label" for="answer-<%= i %>"><%= option %></label>
+        </div>
+        <%
+      }
+      break;
+    case "checkbox":
+      for (let i = 0; i < question.options.length; i++) {
+        const option = question.options[i];
+        %>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="answer-<%= i %>" name="answer[]" value="<%= option %>" <%= answer === option ? "checked" : "" %>>
+          <label class="form-check-label" for="answer-<%= i %>"><%= option %></label>
+        </div>
+        <%
+      }
+      break;
+    default:
+      %>
+      <p>Uh-oh, something went wrong!</p>
+      <%
+      break;
+  }
+  %>
+
+  <div class="form-group mt-3">
+    <input type="submit" value="Next question" class="btn btn-primary">
+
+    <% if (question._id.toString() !== currentQuestionId) { %>
+      &nbsp; <a href="<%= currentQuestionId %>" class="btn btn-secondary">
+        Go to current question
+      </a>
+    <% } %>
+  </div>
+</form>
+
+<%- include ../layout/footer %>

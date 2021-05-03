@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+const debug = require("debug")("surveycity:server");
+const http = require("http");
+
+let app = require("../app");
+
+/**
+ * Seeing how we're using a bunch of promises, we should handle unhandled rejections...
+ * More information: https://nodejs.org/api/process.html#process_event_rejectionhandled
+ */
+
+const unhandledRejections = new Map();
+
+process.on("unhandledRejection", (reason, promise) => {
+    unhandledRejections.set(promise, reason);
+
+    if (unhandledRejections.size > 100) {
+        console.error("There's an unhandled promise rejection leak somewhere. Dump of some of the unhandled rejections:");
+        let counter = 5;
+        for (const [, reason] of unhandledRejections.entries()) {
+            console.error(reason);
+            if (counter-- < 1)
+                break;
+        }
+        process.exit(-1);
+    }
+});
+
+process.on("rejectionHandled", (promise) => {
+    unhandledRejections.delete(promise);
+});
+
+/**
+ * Run the rest of our program async.
+ */
+
+(async() => {
+    /**
+     * Run the setup first.
+     */
+
+    const mongooseUri = process.env.MONGODB_URI || "";
+
+    try {
+        app = await app(mongooseUri);
+    } catch (err) {
+        console.error("Could not set up app before launching server:", err);
+        process.exit(1);
+    }
+
+    /**
+     * Get port from environment and store in Express.
+     */
+
+    const port = normalizePort(process.env.PORT || "3000");
+    app.set("port", port);
+
+    /**
+     * Create HTTP server.
+     */
+
+    const server = http.createServer(app);
+
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+
+    server.listen(port);
+    server.on("error", onError);
+    server.on("listening", onListening);
+
+    /**
+     * Normalize a port into a number, string, or false.
+     */
+
+    function normalizePort(val) {
+        const port = parseInt(val, 10);
+
+        if (isNaN(port)) {
+            // named pipe
+            return val;
+        }
+
+        if (port >= 0) {
+            // port number
+            return port;
+        }
+
+        return false;
+    }
+
+    /**
+     * Event listener for HTTP server "error" event.
+     */
+
+    function onError(error) {
+        if (error.syscall !== "listen") {
+            throw error;
+        }
+
+        const bind = typeof port === "string" ?
+            "Pipe " + port :
+            "Port " + port;
+
+        // handle specific listen errors with friendly messages
+        switch (error.code) {
+            case "EACCES":
+                console.error(bind + " requires elevated privileges");
+                process.exit(1);
+
+            case "EADDRINUSE":
+                console.error(bind + " is already in use");
+                process.exit(1);
+
+            default:
+                throw error;
+        }
+    }
+
+    /**
+     * Event listener for HTTP server "listening" event.
+     */
+
+    function onListening() {
+        const addr = server.address();
+        const bind = typeof addr === "string" ?
+            "pipe " + addr :
+            "port " + addr.port;
+        debug("Listening on " + bind);
+    }
+})();

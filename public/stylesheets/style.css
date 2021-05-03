@@ -1,0 +1,19 @@
+/*
+ * style.css
+ * SurveyCity
+ * 2020-11-09
+ */
+
+body {
+  padding: 50px;
+  font: 14px system-ui, "Lucida Grande", Helvetica, Arial, sans-serif;
+  color: #383e56;
+}
+
+input, select, textarea {
+  font: 14px system-ui, "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}

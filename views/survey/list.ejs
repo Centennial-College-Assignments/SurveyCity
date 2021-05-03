@@ -1,0 +1,59 @@
+<%- include ../layout/header %>
+
+<h1 style="font-family: system-ui; letter-spacing: 2px; font-variant: small-caps; font-weight: 900; color: #383e56;"><%= title %></h1>
+
+<% if (messages.success) { %>
+  <div class="alert alert-success my-3">
+    <%= messages.success %>
+  </div>
+<% } %>
+
+<a href="/survey/add" class="btn btn-primary mb-3 d-inline-block" role="button">
+  <i class="fas fa-plus"></i> &nbsp;Add Survey
+</a>
+
+<table class="table table-striped table-hover" style="width: 100%;">
+  <thead>
+    <tr>
+      <th style="width: 22.5%;" >Title</th>
+      <th>Description</th>
+      <th style="width: 1px;"></th>
+      <th style="width: 1px;"></th>
+      <th style="width: 1px;"></th>
+      <th style="width: 1px;"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% for (const survey of surveys) { %>
+      <tr>
+        <td class="align-middle"><%= survey.title %></td>
+        <td class="align-middle">
+          <%= survey.description.length > 255 ? survey.description.slice(0, 255) + "..." : survey.description %>
+        </td>
+        <td>
+          <a data-copy="https://survey-city.herokuapp.com/answer/<%= survey._id %>" class="btn btn-secondary btn-sm text-nowrap">
+            <i class="fas fa-copy"></i>&nbsp;Copy link
+          </a>
+        </td>
+        <td>
+          <a href="/responses/<%= survey._id %>" class="btn btn-secondary btn-sm text-nowrap">
+            <i class="fas fa-list"></i>&nbsp;Responses
+          </a>
+        </td>
+        <td>
+          <a href="/survey/<%= survey._id %>" class="btn btn-primary btn-sm text-nowrap">
+            <i class="fas fa-pencil-alt"></i>&nbsp;Edit
+          </a>
+        </td>
+        <td>
+          <a href="/survey/<%= survey._id %>/delete" class="btn btn-danger btn-sm text-nowrap require-confirmation">
+            <i class="fas fa-trash-alt"></i>&nbsp;Delete
+          </a>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include ../layout/footer %>

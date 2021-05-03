@@ -1,0 +1,18 @@
+<%- include ../layout/header %>
+
+<h1><%= survey.title %></h1>
+<p><%= survey.description %></p>
+
+<% if (messages.error) { %>
+  <div class="alert alert-danger"><%= messages.error %></div>
+<% } %>
+
+<% if (survey.questions.length !== 0) { %>
+  <a href="/answer/<%= survey._id %>/<%= survey.questions[0]._id %>" class="btn btn-primary">
+    Start survey
+  </a>
+<% } else { %>
+  <em>This survey has no questions.</em>
+<% } %>
+
+<%- include ../layout/footer %>

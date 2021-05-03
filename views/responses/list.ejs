@@ -1,0 +1,86 @@
+<%- include ../layout/header %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+
+<!--Main Content-->
+<main class="container">
+  <h1 style="font-family: system-ui; letter-spacing: 2px; font-variant: small-caps; font-weight: 900; color: #383e56;">
+    <%= title %>: <%= survey.title %>
+  </h1>
+
+  <div class="mb-4">
+    <a href="/survey" class="btn btn-primary">&laquo; Back to list</a>
+    &nbsp;
+    <a href="/survey/<%= survey._id %>" class="btn btn-secondary">Edit survey</a>
+  </div>
+
+  <% if (answers.length > 0) { %>
+    <table class="table table-striped table-hover w-100">
+      <thead>
+        <tr>
+          <th class="w-25">Question</th>
+          <th>Answers</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% for (const question of answers) { %>
+          <tr>
+            <td><%= question.question %></td>
+            <td>
+              <ol style="margin-bottom: .25rem;">
+                <% for (const answer of question.answers) { %>
+                  <li><%= answer.replace(/\0/g, "; ") %></li>
+                <% } %>
+              </ol>
+
+              <%
+              if (["radio", "checkbox"].includes(question.type)) {
+                const id = performance.now();
+
+                const table = {};
+                for (let answer of question.answers) {
+                  answer = answer.split("\0");
+                  for (const a of answer) {
+                    if (!(a in table))
+                      table[a] = 0;
+                    table[a]++;
+                  }
+                }
+                %>
+
+                <div>
+                  <a href="javascript:;" onclick="const el = document.getElementById('chart-<%= id %>'); el.style.display = el.style.display === 'block' ? 'none' : 'block';">
+                    Show/Hide chart
+                  </a>
+                </div>
+                <canvas id="chart-<%= id %>" width="360" height="360" style="display: none;"></canvas>
+
+                <%# The errors in the following script can be ignored - they're not really errors, just the IDE acting up. %>
+                <script>
+                  new Chart(document.getElementById("chart-<%= id %>").getContext("2d"), {
+                    type: "pie",
+                    data: {
+                      datasets: [{
+                        data: <%- JSON.stringify(Object.values(table)) %>,
+                        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
+                      }],
+                      labels: <%- JSON.stringify(Object.keys(table)) %>,
+                    },
+                    options: {
+                      responsive: false,
+                    },
+                  });
+                </script>
+              <% } %>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>No responses yet.</p>
+  <% } %>
+</main>
+
+<%- include ../layout/footer %>

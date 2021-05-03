@@ -1,0 +1,130 @@
+<%- include ../layout/header %>
+
+<h1 style="letter-spacing: 2px; font-variant: small-caps; font-weight: bold;"><%= title.slice(0, title.lastIndexOf(" -")) %></h1>
+
+<% if (messages.success) { %>
+  <div class="alert alert-success my-3">
+    <%= messages.success %>
+  </div>
+<% } %>
+
+<% if (responseCount > 0) { %>
+  <div class="alert alert-warning">
+    <strong>Warning: </strong> changing the survey will invalidate all <%= responseCount %> response(s) to this survey.
+  </div>
+<% } %>
+
+<form method="POST" class="form">
+  <div class="form-group">
+    <label for="title" style="font-size: large;">Title:</label>
+    <input type="text" class="form-control" id="title" name="title" value="<%= survey.title %>">
+  </div>
+
+  <div class="form-group">
+    <label for="title" style="font-size: large;">Description:</label>
+    <textarea class="form-control" id="description" name="description"><%= survey.description %></textarea>
+  </div>
+
+  <h3 style="letter-spacing: 2px; font-variant: small-caps;">Questions</h3>
+
+  <div id="question-list">
+    <% for (let i = 0; i <= survey.questions.length; i++) { %>
+      <%
+      const isQuestion = i < survey.questions.length;
+      const q = isQuestion ? survey.questions[i] : {
+        _id: 0,
+        title: "",
+        type: "radio",
+        options: [],
+      };
+      %>
+
+      <% if (!isQuestion) { %>
+        <template id="question-template">
+      <% } %>
+
+      <div class="question-container">
+        <div class="float-right" style="margin-top: -3px;">
+          <button type="button" class="remove-question btn btn-danger btn-sm">
+            <i class="fas fa-minus"></i>&nbsp; Remove
+          </button>
+        </div>
+        <h5 class="question-header" style="letter-spacing: 2px; font-variant: small-caps;">Question <%= i + 1 %></h5>
+
+        <div class="mb-3">
+          <div class="form-group">
+            <label for="title-<%= q._id %>" class="question-title-label">Title:</label>
+            <input type="text" class="form-control question-title" id="title-<%= q._id %>" name="question_title[]" value="<%= q.question %>">
+          </div>
+
+          <div class="form-group">
+            <label for="type-<%= q._id %>" class="question-type-label">Type:</label>
+            <select name="question_type[]" id="type-<%= q._id %>" class="custom-select question-type">
+              <option value="input" <%= q.type === "input" ? "selected" : "" %>>Short answer</option>
+              <option value="textarea" <%= q.type === "textarea" ? "selected" : "" %>>Long answer</option>
+              <option value="radio" <%= q.type === "radio" ? "selected" : "" %>>Multiple choice (select 1)</option>
+              <option value="checkbox" <%= q.type === "checkbox" ? "selected" : "" %>>Multiple choice (select multiple)</option>
+            </select>
+          </div>
+
+          <div class="form-group question-options-container">
+            <label>Multiple choice options:</label>
+            <ul class="question-options-list">
+              <% for (const option of q.options) { %>
+                <li>
+                  <input type="text" class="form-control question-option mt-1" value="<%= option %>">
+                </li>
+              <% } %>
+              <% if (q.options.length === 0) { %>
+                <li>
+                  <input type="text" class="form-control question-option mt-1">
+                </li>
+              <% } %>
+              <li class="my-1">
+                <a href="javascript:;" class="question-add-option">+ Add option</a>
+              </li>
+            </ul>
+            <input type="hidden" class="question-options" name="question_options[]" value="<%= q.options.join(";") %>">
+          </div>
+        </div>
+        <hr class="my-3">
+      </div>
+
+      <% if (!isQuestion) { %>
+        </template>
+      <% } %>
+    <% } %>
+  </div>
+
+  <div class="text-right">
+    <button type="button" id="add-question" class="btn btn-primary">
+      <i class="fas fa-plus"></i>&nbsp; Add question
+    </button>
+  </div>
+
+  <hr class="my-3">
+
+  <div class="row justify-content-center mt-4">
+    <div class="col-auto text-center">
+      <button type="submit" class="btn btn-primary">
+        Save survey
+      </button>
+
+      <% if (!isNew) { %>
+        <a href="/survey/<%= survey._id %>/delete" class="btn btn-danger require-confirmation">
+          Delete survey
+        </a>
+      <% } %>
+
+      <div class="mt-2">
+        <a href="/survey" class="btn btn-secondary">
+          Cancel
+        </a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script src="/scripts/edit-survey.js" defer></script>
+
+<%- include ../layout/footer %>

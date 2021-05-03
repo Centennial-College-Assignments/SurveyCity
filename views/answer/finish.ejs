@@ -1,0 +1,19 @@
+<%- include ../layout/header %>
+
+<h1><%= survey.title %></h1>
+<p><%= survey.description %></p>
+
+<hr>
+
+<p>
+  Thank you for taking the time to answer the survey. Click the button below to save your
+  responses, or close the browser tab or window to not submit them.
+</p>
+
+<form method="post">
+  <div class="form-group">
+    <input type="submit" value="Submit survey response" class="btn btn-success">
+  </div>
+</form>
+
+<%- include ../layout/footer %>
